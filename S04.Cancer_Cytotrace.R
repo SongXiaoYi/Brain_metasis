@@ -30,31 +30,7 @@ plots <- plotData(cytotrace2_result = Plasma.CytoTRACE,
                   expression_data = Plasma.CytoTRACE,is_seurat = TRUE
                   )
 
-############################################## Barplot
-Plot_matrix <- meta
-Plot_matrix$group <- factor(Plot_matrix$group,levels = c("T","L","M"))
-my_comparisons <- list(c("T", "L"),c("T","M"),c("M","L"))
-p1 <- ggplot(Plot_matrix,aes(group, CytoTRACE2_Score)) +   ggsignif::geom_signif(
-    color = "black",
-    comparisons = list(c("T", "L"),c("T", "M"),c("L", "M")),
-    test = wilcox.test,
-    step_increase = -0.2,
-    textsize = 0.5*6
-  )+
-     geom_boxplot(aes(fill = group),outlier.shape = NA,alpha = 1)+
-     theme_classic()+ylab("CytoTRACE score") + ylim(0,0.5) + xlab('')
-setwd('G:\\YouRui\\abc')
-pdf(file="./Tissue_CytoTRACE2.pdf",width=2.55,height=2.20)
-p1
-dev.off()                                       
-                                       
-###################################################
-Plot_matrix <- meta
-#Plot_matrix <- Plot_matrix[which(Plot_matrix$Isotypes != "None"),]
-#Plot_matrix$Isotypes <- factor(Plot_matrix$Isotypes,levels=c("IgM","IgD","IgG4","IgA2","IgG2","IgA1","IgG1","IgG3"))
-p2 <- ggplot(Plot_matrix,aes(B_SubCluster, CytoTRACE2_Score)) + stat_compare_means()+
-     geom_boxplot(aes(fill = B_SubCluster),outlier.shape = NA,alpha = 1)+
-     theme_classic()+ylab("CytoTRACE score") + ylim(0,0.3) + xlab('') + theme(axis.text.x = element_text(angle = 90, size = 10,vjust = 0.5,hjust = 1)) + NoLegend()
+
       
 
 
