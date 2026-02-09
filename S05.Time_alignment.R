@@ -145,6 +145,61 @@ abc <- mouse2human(abc)
 
 commen <- intersect(select_gene,abc$humanGene)
 
-
 #########################################
+library(Seurat)      # 用于单细胞数据分析
+library(ggplot2)     # 用于数据可视化
+library(ggpubr)      # 用于添加统计信息到图形
+library(ggExtra)     # 用于添加边缘分布图
+library(dplyr) 
+####################################
+####################################
+plot_data1 <- FetchData(pbmc, 
+                      vars = c("PGAP1", "SLIT2"),
+                      slot = "data")
+plot_data1_filtered <- plot_data1[plot_data1$PGAP1 > 0 & plot_data1$SLIT2 > 0, ]
+
+options(repr.plot.height=8, repr.plot.width=8)  # 设置图形大小
+p1_filtered <- ggplot(plot_data1_filtered, aes(x = PGAP1, y = SLIT2)) +
+    geom_point(size = 1, alpha = 0.5, color = "grey30") +  # 添加散点
+    geom_smooth(method = "lm", color = "blue", se = TRUE, fill = "grey90") +  # 添加拟合线和置信区间
+    labs(x = "PGAP1 expression", y = "SLIT2 expression") +  # 设置轴标签
+    # 设置主题和样式
+    theme_bw() +
+    theme(
+        panel.grid.major = element_line(color = "grey90", linewidth = 0.3),  # 主网格线
+        panel.grid.minor = element_line(color = "grey90", linewidth = 0.3),  # 次网格线
+        panel.background = element_rect(fill = "white"),  # 背景颜色
+        panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5),  # 边框
+        axis.ticks = element_line(color = "black", linewidth = 0.3),  # 刻度线
+        axis.text = element_text(color = "black", size = 10),  # 轴文本
+        axis.title = element_text(color = "black", size = 16),  # 轴标题
+        axis.ticks.length = unit(0.2, "cm"),  # 刻度线长度
+        plot.background = element_rect(fill = "white")  # 图形背景
+    ) +
+    # 设置x轴刻度
+    scale_x_continuous(
+        breaks = seq(0, max(plot_data1_filtered$PGAP1), by = 1),
+        minor_breaks = seq(0, max(plot_data1_filtered$PGAP1), by = 0.5)
+    ) +
+    # 设置y轴刻度
+    scale_y_continuous(
+        limits = c(0, max(plot_data1_filtered$SLIT2)),
+        breaks = seq(0, max(plot_data1_filtered$SLIT2), by = 1),
+        minor_breaks = seq(0, max(plot_data1_filtered$SLIT2), by = 0.5)
+    ) +
+    # 添加相关性统计信息
+    stat_cor(method = "pearson",
+             label.x.npc = "left",
+             label.y.npc = "top",
+             size = 4)
+
+# 为过滤后的散点图添加边缘分布图
+p1_filtered_with_marginal <- ggMarginal(p1_filtered,
+                             type = "density",  # 设置边缘图类型为密度图
+                             margins = "both",  # 显示两个轴的边缘分布
+                             size = 5,
+                             xparams = list(fill = "orange", alpha = 1),  # x轴边缘图样式
+                             yparams = list(fill = "blue", alpha = 1))    # y轴边缘图样式
+p1_filtered_with_marginal  # 显示图形
+
 
