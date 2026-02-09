@@ -111,7 +111,7 @@ p2 <- TrajectoryPlot(object = coembed,
     ggtitle("Trajectory")
 #########################
 trajRNA <- GetTrajectory(coembed, assay = 'RNA', trajectory.name = "Trajectory", 
-        groupEvery = 1, slot = "data", smoothWindow = 7, 
+        groupEvery = 1, slot = "data", smoothWindow = 11, 
         log2Norm = TRUE)
 
 groupMatRNA <- suppressMessages(TrajectoryHeatmap(trajRNA, 
@@ -120,6 +120,7 @@ groupMatRNA <- suppressMessages(TrajectoryHeatmap(trajRNA,
 
 Gene_set_change <- rownames(groupMatRNA)
 saveRDS(groupMatRNA, file = 'Change_genes.rds')
+########################################
 ########################################
 library(Mfuzz)
 mfuzz_class <- new('ExpressionSet', exprs = groupMatRNA)
@@ -142,9 +143,13 @@ library(homologene)
 abc <- sati$gene
 abc <- mouse2human(abc)
 
-
 commen <- intersect(select_gene,abc$humanGene)
 
+trajRNA <- trajRNA[select_gene[1000:1464],]
+ht <- TrajectoryHeatmap(trajRNA,
+                        varCutOff = 0.9,
+                        pal = paletteContinuous(set = "horizonExtra"),
+                        limits = c(-2, 2),labelMarkers = commen, labelTop = 25)
 #########################################
 library(Seurat)      # 用于单细胞数据分析
 library(ggplot2)     # 用于数据可视化
